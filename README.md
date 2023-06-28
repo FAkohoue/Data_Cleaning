@@ -1,5 +1,5 @@
 # EasyEDA
-This R package is a collection of useful functions to facilitate Exploratory data analysis (EDA) in R software. It also includes function to rearrange columns and perform full joins on multi-environment trial data to obtain a single dataset for downstream analyses.
+This R package is a collection of useful functions to facilitate Exploratory data analysis (EDA) in R software. It also includes a function to rearrange columns and perform full join on multi-environment trial datasets to obtain a single dataset for downstream analysis.
 
 # Installation in R
 # Install devtools
