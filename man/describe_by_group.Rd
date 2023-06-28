@@ -56,15 +56,12 @@ PH<-c(100,98,87,89.9,109,111,104,105,95,96,92,91,88,34,67,77,65,66,34,57,112,109
 Group<-c("G1","G2","G3","G4","G2","G1","G3","G4","G4","G3","G2","G1","G1","G4","G3","G2","G1","G3","G4","G2","G2","G1","G3","G1")
 dat<-data.frame(Group,DS,PH)
 
-describe_by_group(data=dat,group=dat$Group,plot = F,path="summary_stats")
-
-## The function is currently defined as
-function(data, group, path,plot=TRUE){
+describe_by_group <- function(data, group, path, plot = TRUE) {
   # check input arguments
   stopifnot(is.data.frame(data), is.character(group), is.character(path))
 
   # create directory if it doesn't exist
-  if(!dir.exists(path)){
+  if (!dir.exists(path)) {
     dir.create(path)
   }
   # initialize empty list to hold summary statistics for each column
@@ -74,33 +71,33 @@ function(data, group, path,plot=TRUE){
   group_quo <- enquo(group)
 
   # loop over each numeric column and calculate summary statistics
-  for (col in 2:length(data)){
+  for (col in 2:length(data)) {
 
     # convert col to column name
     Trait <- names(data)[col]
 
     # check if column exists in data
-    if(Trait %in% colnames(data)){
+    if (Trait %in% colnames(data)) {
 
       # calculate summary statistics for each group
-      summary_stats<- data %>%
+      summary_stats <- data %>%
         group_by(!!enquo(group)) %>%
         summarise(
-          Size=length(!!sym(Trait)),
-          Mean = mean(!!sym(Trait)),
-          First_Quart = quantile(!!sym(Trait),0.25),
-          Median = median(!!sym(Trait)),
-          Third_Quart = quantile(!!sym(Trait),0.75),
-          Trimmed_Mean = mean(!!sym(Trait), trim = 0.1),
-          SD = sd(!!sym(Trait)),
-          MAD = mad(!!sym(Trait)),
-          Min = min(!!sym(Trait)),
-          Max = max(!!sym(Trait)),
-          CV = sd(!!sym(Trait))/mean(!!sym(Trait)),
-          Range = max(!!sym(Trait)) - min(!!sym(Trait)),
-          SE = std.error(!!sym(Trait)),
-          Skewness = skewness(!!sym(Trait)),
-          Kurtosis = kurtosis(!!sym(Trait))
+          Size = length(!!sym(Trait)),
+          Mean = mean(!!sym(Trait), na.rm = TRUE),
+          First_Quart = quantile(!!sym(Trait), 0.25, na.rm = TRUE),
+          Median = median(!!sym(Trait), na.rm = TRUE),
+          Third_Quart = quantile(!!sym(Trait), 0.75, na.rm = TRUE),
+          Trimmed_Mean = mean(!!sym(Trait), trim = 0.1, na.rm = TRUE),
+          SD = sd(!!sym(Trait), na.rm = TRUE),
+          MAD = mad(!!sym(Trait), na.rm = TRUE),
+          Min = min(!!sym(Trait), na.rm = TRUE),
+          Max = max(!!sym(Trait), na.rm = TRUE),
+          CV = sd(!!sym(Trait), na.rm = TRUE) / mean(!!sym(Trait), na.rm = TRUE),
+          Range = max(!!sym(Trait), na.rm = TRUE) - min(!!sym(Trait), na.rm = TRUE),
+          SE = std.error(!!sym(Trait), na.rm = TRUE),
+          Skewness = skewness(!!sym(Trait), na.rm = TRUE),
+          Kurtosis = kurtosis(!!sym(Trait), na.rm = TRUE)
         )
 
       # add column name as first row
@@ -109,15 +106,15 @@ function(data, group, path,plot=TRUE){
       # append summary statistics to list
       summary_stats_by_group[[Trait]] <- summary_stats
 
-      if(plot){
+      if (plot) {
         # construct plot with column name as plot name
-        p <- ggplot(data = data, aes(x = !!group_quo, y = !!sym(Trait),fill=!!group_quo)) +
-          geom_boxplot() +theme_classic()+theme(legend.title=element_blank())+xlab(" ")+
+        p <- ggplot(data = data, aes(x = !!group_quo, y = !!sym(Trait), fill=!!group_quo)) +
+          geom_boxplot() + theme_classic() + theme(legend.title = element_blank()) + xlab(" ") +
           labs(title = paste0("Boxplot of ", Trait))
 
         # export graph with column name as file name
         p <- paste0(Trait, "_boxplot.pdf")
-        ggsave(p,path=path)
+        ggsave(p, path = path)
       }
 
     }
@@ -138,7 +135,7 @@ function(data, group, path,plot=TRUE){
   # export summary statistics for all columns to a CSV file
   file_name_all1 <- paste0("all_summary_stats_by_group.csv")
   file_path_all1 <- file.path(path, file_name_all1)
-  write.csv( summary_stats_by_group, file_path_all1, row.names = FALSE)
+  write.csv(summary_stats_by_group, file_path_all1, row.names = FALSE)
 
   # return NULL to indicate success
   NULL

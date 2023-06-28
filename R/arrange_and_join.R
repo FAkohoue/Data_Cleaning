@@ -1,8 +1,4 @@
-arrange_and_join <- function(output_path, ...){
-
-  #load required libraries
-  library(dplyr)
-  library(tidyverse)
+arrange_and_join <- function(output_path, ...) {
 
   datasets <- list(...)  # Store all input datasets in a list
 

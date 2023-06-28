@@ -61,42 +61,43 @@ dat<-data.frame(Group,DS,PH)
 describe_all(data=dat,path="summary_stats_all",hist=FALSE,boxplot = FALSE)
 
 ## The function is currently defined as
-function(data,path,hist=TRUE,boxplot=TRUE,unused=NULL){
+
+describe_all <- function(data, path, hist = TRUE, boxplot = TRUE, unused = NULL) {
   # check input arguments
   stopifnot(is.data.frame(data), is.character(path))
 
   # create directory if it doesn't exist
-  if(!dir.exists(path)){
+  if (!dir.exists(path)) {
     dir.create(path)
   }
 
   # initialize empty list to hold summary statistics for each column
   summary_stats_all <- list()
 
-  for (col in 2:length(data)){
+  for (col in 2:length(data)) {
 
     # convert col to column name
     Trait <- names(data)[col]
 
     #Calculate summary statistics
 
-    summary_stats<-data%>%
+    summary_stats <- data %>%
       summarise(
-        Size=length(!!sym(Trait)),
-        Mean = mean(!!sym(Trait)),
-        First_Quart = quantile(!!sym(Trait),0.25),
-        Median = median(!!sym(Trait)),
-        Third_Quart = quantile(!!sym(Trait),0.25),
-        Trimmed_Mean = mean(!!sym(Trait), trim = 0.1),
-        SD = sd(!!sym(Trait)),
-        MAD = mad(!!sym(Trait)),
-        Min = min(!!sym(Trait)),
-        Max = max(!!sym(Trait)),
-        CV = sd(!!sym(Trait))/mean(!!sym(Trait)),
-        Range = max(!!sym(Trait)) - min(!!sym(Trait)),
-        SE = std.error(!!sym(Trait)),
-        Skewness = skewness(!!sym(Trait)),
-        Kurtosis = kurtosis(!!sym(Trait))
+        Size = length(!!sym(Trait)),
+        Mean = mean(!!sym(Trait), na.rm = TRUE),
+        First_Quart = quantile(!!sym(Trait),0.25, na.rm = TRUE),
+        Median = median(!!sym(Trait), na.rm = TRUE),
+        Third_Quart = quantile(!!sym(Trait),0.25, na.rm = TRUE),
+        Trimmed_Mean = mean(!!sym(Trait), trim = 0.1, na.rm = TRUE),
+        SD = sd(!!sym(Trait), na.rm = TRUE),
+        MAD = mad(!!sym(Trait), na.rm = TRUE),
+        Min = min(!!sym(Trait), na.rm = TRUE),
+        Max = max(!!sym(Trait), na.rm = TRUE),
+        CV = sd(!!sym(Trait), na.rm = TRUE) / mean(!!sym(Trait), na.rm = TRUE),
+        Range = max(!!sym(Trait), na.rm = TRUE) - min(!!sym(Trait), na.rm = TRUE),
+        SE = std.error(!!sym(Trait), na.rm = TRUE),
+        Skewness = skewness(!!sym(Trait), na.rm = TRUE),
+        Kurtosis = kurtosis(!!sym(Trait), na.rm = TRUE)
       )
 
     # add column name as first row
@@ -107,23 +108,23 @@ function(data,path,hist=TRUE,boxplot=TRUE,unused=NULL){
 
     #Build histograms with column name as plot name
 
-        p1 <- ggplot(data = data, aes(x=!!sym(Trait))) +
-          geom_histogram(color="black", fill="grey",binwidth=1) +theme_classic()+
+        p1 <- ggplot(data = data, aes(x = !!sym(Trait))) +
+          geom_histogram(color ="black", fill = "grey",binwidth = 1) + theme_classic() +
           labs(title = paste0("Histogram of ", Trait))
 
         # export graph
-        p1<-paste0(Trait,"_histogram.pdf")
-        ggsave(p1,path=path)
+        p1 <- paste0(Trait, "_histogram.pdf")
+        ggsave(p1, path = path)
 
     #Build boxplots with column name as plot name
 
-        p2 <- ggplot(data = data, aes(x=!!sym(Trait))) +
-          geom_boxplot(color="black", fill="grey")+theme_classic()+
+        p2 <- ggplot(data = data, aes(x = !!sym(Trait))) +
+          geom_boxplot(color = "black", fill = "grey") + theme_classic() +
           labs(title = paste0("Boxplot of ", Trait))
 
         # export graph
-        p2<-paste0(Trait,"_boxplot.pdf")
-        ggsave(p2,path=path)
+        p2 <- paste0(Trait, "_boxplot.pdf")
+        ggsave(p2, path = path)
 
   }
 

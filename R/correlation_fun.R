@@ -7,7 +7,7 @@
 #' @return NULL
 #' @export
 #'
-correlation <- function(data, path, calculate_cor = TRUE, generate_plot = TRUE,unused=NULL,corMethod=c("pearson","kendall","spearman")){
+correlation <- function(data, path, calculate_cor = TRUE, generate_plot = TRUE, unused=NULL, corMethod=c("pearson","kendall","spearman")){
 
   # Check input arguments
   stopifnot(is.data.frame(data), is.character(path))
