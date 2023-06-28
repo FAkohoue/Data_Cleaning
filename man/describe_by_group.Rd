@@ -4,7 +4,7 @@
 \title{describe_by_group for EDA
 %%  ~~function to do ... ~~
 }
-\description{This function summarizes numeric data and produces boxplots.
+\description{This function summarizes numeric data and produces boxplots per group.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
@@ -12,12 +12,17 @@ describe_by_group(data, group, path, plot = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{}{
-  \code{data} A data.frame or tibble containing the data.
-  \code{group} A string indicating the column name to group the data by.
-  \code{path} A string indicating the directory to save the output files to.
-  \code{plot} A logical indicating whether to generate boxplots for each numeric column.
+  \item{data}{A data.frame or tibble containing the data.
 %%     ~~Describe \code{x} here~~
+}
+  \item{group}{A string indicating the column name to group the data by.
+  %%     ~~Describe \code{x} here~~
+}
+  \item{path}{A string indicating the directory to save the output files to.
+  %%     ~~Describe \code{x} here~~
+}
+  \item{plot}{A logical indicating whether to generate boxplots for each numeric column.
+  %%     ~~Describe \code{x} here~~
 }
 }
 \details{
@@ -54,16 +59,87 @@ dat<-data.frame(Group,DS,PH)
 describe_by_group(data=dat,group=dat$Group,plot = F,path="summary_stats")
 
 ## The function is currently defined as
-function (x)
-{
+function(data, group, path,plot=TRUE){
+  # check input arguments
+  stopifnot(is.data.frame(data), is.character(group), is.character(path))
+
+  # create directory if it doesn't exist
+  if(!dir.exists(path)){
+    dir.create(path)
   }
+  # initialize empty list to hold summary statistics for each column
+  summary_stats_by_group <- list()
+
+  # convert group argument to a quosure
+  group_quo <- enquo(group)
+
+  # loop over each numeric column and calculate summary statistics
+  for (col in 2:length(data)){
+
+    # convert col to column name
+    Trait <- names(data)[col]
+
+    # check if column exists in data
+    if(Trait %in% colnames(data)){
+
+      # calculate summary statistics for each group
+      summary_stats<- data %>%
+        group_by(!!enquo(group)) %>%
+        summarise(
+          Size=length(!!sym(Trait)),
+          Mean = mean(!!sym(Trait)),
+          First_Quart = quantile(!!sym(Trait),0.25),
+          Median = median(!!sym(Trait)),
+          Third_Quart = quantile(!!sym(Trait),0.75),
+          Trimmed_Mean = mean(!!sym(Trait), trim = 0.1),
+          SD = sd(!!sym(Trait)),
+          MAD = mad(!!sym(Trait)),
+          Min = min(!!sym(Trait)),
+          Max = max(!!sym(Trait)),
+          CV = sd(!!sym(Trait))/mean(!!sym(Trait)),
+          Range = max(!!sym(Trait)) - min(!!sym(Trait)),
+          SE = std.error(!!sym(Trait)),
+          Skewness = skewness(!!sym(Trait)),
+          Kurtosis = kurtosis(!!sym(Trait))
+        )
+
+      # add column name as first row
+      summary_stats <- cbind(Trait, summary_stats)
+
+      # append summary statistics to list
+      summary_stats_by_group[[Trait]] <- summary_stats
+
+      if(plot){
+        # construct plot with column name as plot name
+        p <- ggplot(data = data, aes(x = !!group_quo, y = !!sym(Trait),fill=!!group_quo)) +
+          geom_boxplot() +theme_classic()+theme(legend.title=element_blank())+xlab(" ")+
+          labs(title = paste0("Boxplot of ", Trait))
+
+        # export graph with column name as file name
+        p <- paste0(Trait, "_boxplot.pdf")
+        ggsave(p,path=path)
+      }
+
+    }
+
+    else {
+      # skip column if not found in data
+      message(paste0("Column ", Trait, " not found in data."))
+    }
+
+  }
+
+  # combine summary statistics for all columns into a single data frame
+  summary_stats_by_group <- do.call(rbind, summary_stats_by_group)
+
+  # rename the second column
+  colnames(summary_stats_by_group)[2] <- "Group"
+
+  # export summary statistics for all columns to a CSV file
+  file_name_all1 <- paste0("all_summary_stats_by_group.csv")
+  file_path_all1 <- file.path(path, file_name_all1)
+  write.csv( summary_stats_by_group, file_path_all1, row.names = FALSE)
+
+  # return NULL to indicate success
+  NULL
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
