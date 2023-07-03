@@ -1,7 +1,7 @@
 \name{arrange_and_join}
 \alias{arrange_and_join}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Rearrange and merge multi-environment trail data.
+\title{Rearrange and merge multi-environment trial data.
 %%  ~~function to do ... ~~
 }
 \description{This function helps to rearrange and merge multi-environment trial data into a single file for downstream analyses.
