@@ -4,7 +4,7 @@
 \title{Rearrange and merge multi-environment trail data.
 %%  ~~function to do ... ~~
 }
-\description{This function helps to rearrange and merge multi-environment trail data into a single file for downstream analyses.
+\description{This function helps to rearrange and merge multi-environment trial data into a single file for downstream analyses.
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{

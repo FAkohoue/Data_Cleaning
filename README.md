@@ -1,11 +1,11 @@
-# EasyEDA
+# EasyExplore
 This R package is a collection of useful functions to facilitate Exploratory data analysis (EDA) in R software. It also includes a function to rearrange columns and perform full join on multi-environment trial datasets to obtain a single dataset for downstream analysis.
 
 # Installation in R
 # Install devtools
 devtools::install_github("hadley/devtools")
-# Install EasyEDA
-devtools::install_github("FAkohoue/EasyEDA")
+# Install EasyExplore
+devtools::install_github("FAkohoue/EasyExplore")
 
 # License
 This package is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.

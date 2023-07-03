@@ -1,10 +1,10 @@
-Package: EasyEDA
+Package: EasyExplore
 Type: Package
 Title: Package for Exploratory Data Analysis (EDA)
 Version: 0.1.0
 Author: Félicien Akohoue, a Quantitative Genetics Researcher.
 Maintainer: The package maintainer <akohoue.f@gmail.com>
-Description: This package generates summary statistics and boxplots for each numeric column in a dataset, grouped by a specified column.
+Description: This R package is a collection of useful functions to facilitate Exploratory data analysis (EDA) in R software. It also includes a function to rearrange columns and perform full join on multi-environment trial datasets to obtain a single dataset for downstream analysis.
 Depends: dplyr, e1071, moments, stats, ggplot2, ggpubr, GGally, plotrix, tidyverse
 License: GPL-2
 Encoding: UTF-8
